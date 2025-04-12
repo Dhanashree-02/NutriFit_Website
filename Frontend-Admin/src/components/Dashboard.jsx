@@ -64,7 +64,9 @@ const Dashboard = () => {
           <div className="content">
             <div>
               <p>Hello,</p>
-              <h5>{user && `${user.firstName} ${user.lastName}`}</h5>
+              <h5 className="user-fullname">
+                {user && `${user.firstName} ${user.lastName}`}
+              </h5>
             </div>
             <p className="desc">
               The NutriFit Administration Panel enables admins to manage

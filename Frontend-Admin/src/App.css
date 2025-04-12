@@ -236,6 +236,15 @@ select, button{
   gap: 12px;
 }
 
+.user-fullname {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 1.50rem;
+  font-weight: 600;
+  color: #333;
+}
+
 
 .dashboard .banner:first-child .secondBox p,
 .dashboard .banner:first-child .thirdBox p {
@@ -628,3 +637,5 @@ input[type="time"]:before {
   color: #141349;
   margin-right: 0.5em;
 }
+
+

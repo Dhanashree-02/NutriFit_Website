@@ -245,3 +245,88 @@ export const addNewDoctor = catchAsyncErrors(async (req, res, next) => {
     doctor,
   });
 });
+
+export const editDoctor = catchAsyncErrors(async (req, res, next) => {
+  // Find the doctor by id from request parameters
+  const doctor = await User.findById(req.params.id);
+  if (!doctor) {
+    return next(new ErrorHandler("Doctor not found", 404));
+  }
+
+  // Destructure fields from req.body for updating details
+  const {
+    firstName,
+    lastName,
+    email,
+    phone,
+    gender,
+    aadhar,
+    dob,
+    doctrDptmnt,
+  } = req.body;
+
+  // Check if a new avatar file is provided in the request
+  if (req.files && req.files.doctrAvatar) {
+    const { doctrAvatar } = req.files;
+    const allowedFormats = ["image/png", "image/jpeg", "image/webp"];
+
+    if (!allowedFormats.includes(doctrAvatar.mimetype)) {
+      return next(new ErrorHandler("File format not supported!", 400));
+    }
+
+    // If there's an existing avatar, remove it from Cloudinary first
+    if (doctor.doctrAvatar && doctor.doctrAvatar.public_id) {
+      await cloudinary.uploader.destroy(doctor.doctrAvatar.public_id);
+    }
+
+    // Upload new avatar
+    const cloudinaryResponse = await cloudinary.uploader.upload(doctrAvatar.tempFilePath);
+    if (!cloudinaryResponse || cloudinaryResponse.error) {
+      console.error(
+        "Cloudinary Error:",
+        cloudinaryResponse.error || "Unknown Cloudinary Error"
+      );
+    } else {
+      // Update avatar details in doctor document
+      doctor.doctrAvatar = {
+        public_id: cloudinaryResponse.public_id,
+        url: cloudinaryResponse.secure_url,
+      };
+    }
+  }
+
+  // Update doctor details if provided (only update the fields that are sent)
+  doctor.firstName = firstName || doctor.firstName;
+  doctor.lastName = lastName || doctor.lastName;
+  doctor.email = email || doctor.email;
+  doctor.phone = phone || doctor.phone;
+  doctor.gender = gender || doctor.gender;
+  doctor.aadhar = aadhar || doctor.aadhar;
+  doctor.dob = dob || doctor.dob;
+  doctor.doctrDptmnt = doctrDptmnt || doctor.doctrDptmnt;
+
+  // Save updated doctor document
+  await doctor.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Doctor details updated successfully!",
+    doctor,
+  });
+});
+
+export const deleteDoctor = catchAsyncErrors(async (req, res, next) => {
+  // Find the doctor by id from request parameters
+  try {
+    const doctor = await User.findByIdAndDelete(req.params.id);
+
+    if (!doctor) {
+      return res.status(404).json({ success: false, message: "Doctor not found" });
+    }
+
+    res.status(200).json({ success: true, message: "Doctor deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting doctor:", error.message);
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+});
