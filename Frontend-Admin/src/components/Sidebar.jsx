@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { Context } from "../main";
 import { TiHome } from "react-icons/ti";
 import { AiFillMessage } from "react-icons/ai";
-import { GiHamburgerMenu } from "react-icons/gi";
+// import { GiHamburgerMenu } from "react-icons/gi";
 import { FaUserDoctor } from "react-icons/fa6";
 import { MdAddModerator } from "react-icons/md";
 import { IoPersonAddSharp } from "react-icons/io5";
@@ -81,10 +81,10 @@ const Sidebar = () => {
       <div
         style={!isAuthenticated ? { display: "none" } : { display: "flex", padding: "10px" }}
       >
-        <GiHamburgerMenu
+        {/* <GiHamburgerMenu
           onClick={() => setShow(!show)}
           style={{ color: "#b0b0b0", fontSize: "24px", cursor: "pointer" }}
-        />
+        /> */}
       </div>
     </>
   );
